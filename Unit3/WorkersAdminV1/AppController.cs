@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkersAdminV1.Entities;
 using WorkersAdminV1.Managers;
 
@@ -152,7 +150,7 @@ namespace WorkersAdminV1
                 return;
             }
 
-            var assignedTasks = new List<Task>();
+            var assignedTasks = new List<Tasks>();
 
             foreach (var worker in team.Technicians)
             {

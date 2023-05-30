@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WorkersAdminV1.Entities
 {
-    public class Task
+    public class Tasks
     {
 
         private string _technology;
@@ -29,7 +29,7 @@ namespace WorkersAdminV1.Entities
         }
         public int? IdWorker { get; set; }
 
-        public Task(string name, string description, string technology)
+        public Tasks(string name, string description, string technology)
         {
             TotalCount++;
             Id = TotalCount;

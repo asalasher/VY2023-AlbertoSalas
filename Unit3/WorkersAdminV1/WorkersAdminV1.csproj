@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\ItWorker.cs" />
-    <Compile Include="Entities\Task.cs" />
+    <Compile Include="Entities\Tasks.cs" />
     <Compile Include="Entities\Team.cs" />
     <Compile Include="Entities\Worker.cs" />
     <Compile Include="Enums.cs" />
