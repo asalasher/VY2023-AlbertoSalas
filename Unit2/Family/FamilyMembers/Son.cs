@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Family.FamilyMembers
 {
-    internal class Son: Father
+    public class Son: Father
     {
 
         public int schoolGrade;

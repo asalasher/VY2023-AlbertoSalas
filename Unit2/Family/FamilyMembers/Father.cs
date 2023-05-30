@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Family.FamilyMembers
 {
-    internal class Father: Grandfather
+    public class Father: Grandfather
     {
 
         public int height;
