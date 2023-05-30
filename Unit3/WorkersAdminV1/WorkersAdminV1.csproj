@@ -43,11 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\ItWorker.cs" />
+    <Compile Include="Entities\Task.cs" />
+    <Compile Include="Entities\Team.cs" />
+    <Compile Include="Entities\Worker.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="AppController.cs" />
+    <Compile Include="DataValidator.cs" />
+    <Compile Include="Managers\TaskManager.cs" />
+    <Compile Include="Managers\TeamManager.cs" />
+    <Compile Include="Managers\WorkerManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
