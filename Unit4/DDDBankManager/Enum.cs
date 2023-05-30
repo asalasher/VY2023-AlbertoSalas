@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace DDDBankManager
 {
-    public class Program
+    public enum TransactionType
     {
-        static void Main(string[] args)
-        {
-            new ConsoleLogger(3).Run();
- 
-        }
+        Income,
+        Outcome,
+        All
     }
 }
