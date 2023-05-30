@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkersAdminV1", "Unit3\Wor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkersAdminV2", "Unit3\WorkersAdminV2\WorkersAdminV2.csproj", "{E8022625-F694-4535-B210-1A21A7029C69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDBankManager", "Unit4\DDDBankManager\DDDBankManager.csproj", "{A713E036-686C-40F6-8693-949D087061E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{E8022625-F694-4535-B210-1A21A7029C69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8022625-F694-4535-B210-1A21A7029C69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8022625-F694-4535-B210-1A21A7029C69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A713E036-686C-40F6-8693-949D087061E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A713E036-686C-40F6-8693-949D087061E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A713E036-686C-40F6-8693-949D087061E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A713E036-686C-40F6-8693-949D087061E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{0FDABFD1-B7B3-4752-A9C4-09BFCE5329F8} = {6F5123E8-7DE4-4475-AD42-E515BA0DFD1F}
 		{B00861BE-2DE1-4373-BBE5-0972CB0673C9} = {0EDEEA41-9036-4B60-A78D-C3B5FEB1CE13}
 		{E8022625-F694-4535-B210-1A21A7029C69} = {0EDEEA41-9036-4B60-A78D-C3B5FEB1CE13}
+		{A713E036-686C-40F6-8693-949D087061E4} = {04E0D82C-E87F-4DEC-B855-0F848FCAFE09}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78B6DF37-6CF4-49DC-875C-FADC5362C173}
