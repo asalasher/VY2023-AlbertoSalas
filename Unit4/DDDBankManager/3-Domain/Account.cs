@@ -8,7 +8,7 @@ namespace POOBankManagerV2.Classes
     {
         private static int totalNumber = 0;
         public int AccountNumber { get; set; }
-        private List<Transaction> Transactions { get; set; }
+        public List<Transaction> Transactions { get; set; }
 
         public Account(string accountNumber)
         {

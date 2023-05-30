@@ -1,9 +1,6 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DDDBankManager
 {
@@ -32,7 +29,6 @@ namespace DDDBankManager
 
         public void Run()
         {
-
             LogInUser();
             if (exit) { return; }
 
@@ -42,7 +38,6 @@ namespace DDDBankManager
                 AskForOption();
             }
             while (!exit);
-
         }
 
         public void LogInUser()
@@ -52,9 +47,9 @@ namespace DDDBankManager
 
             while (numberOfAttempts < maxNumberOfAttempts)
             {
-                string inputAccount = AskForString("Introduce your account number");
+                int inputAccount = AskForInteger("Introduce your account number", 1);
                 string inputPassword = AskForString("Introduce your password");
-                User user = userManager.GetUserCredentials(inputAccount, inputPassword)[0];
+                User user = new AccountManager.GetUserByAccountNumber(inputAccount);
 
                 if (user != null)
                 {
@@ -96,7 +91,7 @@ namespace DDDBankManager
             return 0;
         }
 
-        public decimal AskForDecimal(string consoleText, int minimumValue)
+        public decimal AskForDecimal(string consoleText, decimal minimumValue)
         {
             numberOfAttempts = 0;
             Console.WriteLine($"{consoleText}. It must be a decimal number greater or equal to {minimumValue}.");
@@ -164,11 +159,13 @@ namespace DDDBankManager
             switch (chosenOption)
             {
                 case "1":
-                    RegisterNewItWorker();
+                    // Insert money
+                    WithdrawMoney();
                     break;
 
                 case "2":
-                    RegisterNewTeam();
+                    // Withdraw money
+                    InsertMoney();
                     break;
 
                 case "3":
@@ -184,15 +181,12 @@ namespace DDDBankManager
                     break;
 
                 case "6":
-                    ListUnassignedTasks();
+                    PrintAccountBalance();
+                    // Calculate balance
                     break;
 
                 case "7":
-                    ListTasksAssignmentsByTeamName();
-                    break;
-
-                case "7":
-                    exit = true;
+                    Logout();
                     break;
 
                 default:
@@ -200,6 +194,28 @@ namespace DDDBankManager
                     break;
             }
 
+        }
+
+        public void InsertMoney()
+        {
+            decimal amount = AskForDecimal("Insert the amount you would like to insert", 0.1m);
+        }
+
+        public void WithdrawMoney()
+        {
+            decimal amount = AskForDecimal("Insert the amount you would like to withdraw", 0.1m);
+        }
+
+        public void Logout()
+        {
+            activeUser = null;
+            Console.WriteLine("Logging you out...");
+        }
+
+        public void PrintAccountBalance()
+        {
+            Console.WriteLine("Your account balance is:");
+            decimal balance = new AccountManager().CalculateBalance(activeUser.AccountNumber);
         }
 
         public void PrintTransactions(TransactionType transactionType)

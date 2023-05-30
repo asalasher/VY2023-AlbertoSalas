@@ -24,36 +24,6 @@ namespace DDDBankManager
             return false;
         }
 
-        public void PrintTransactions(string transactionType)
-        {
-            if (Transactions.Count == 0)
-            {
-                Console.WriteLine("There are no transactions to show");
-                return;
-            }
-            foreach (Transaction transaction in Transactions)
-            {
-                switch (transactionType)
-                {
-                    case "income":
-                        if (transaction.Quantity > 0)
-                        {
-                            Console.WriteLine(transaction.ToString());
-                        }
-                        break;
-                    case "outcome":
-                        if (transaction.Quantity < 0)
-                        {
-                            Console.WriteLine(transaction.ToString());
-                        }
-                        break;
-                    default:
-                        Console.WriteLine(transaction.ToString());
-                        break;
-                }
-            }
-            return;
-        }
     }
 
 }

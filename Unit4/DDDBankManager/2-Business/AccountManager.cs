@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DDDBankManager._4_IntrastructureData;
+using POOBankManagerV2.Classes;
 
 namespace DDDBankManager
 {
     public class AccountManager
     {
-        private List<User> Users { get; set; }
-        public AccountManager(List<User> users)
+        public Repository Repository { get; set; }
+
+        public AccountManager() { }
+
+        public AccountManager(Repository repository)
         {
-            Users = users;
+            Repository = repository;
         }
 
         public User GetUserByAccountNumber(int accountNumber)
         {
-            foreach (var user in Users)
+            foreach (var user in Repository.users)
             {
                 if (user.AccountNumber == accountNumber)
                 {
@@ -26,14 +26,33 @@ namespace DDDBankManager
             return null;
         }
 
-        public decimal CalculateBalance(int accountNumber)
+        public Account GetAccountByNumber(int accountNumber)
         {
+            foreach (Account account in Repository.accounts)
+            {
+                if (account.AccountNumber == accountNumber)
+                {
+                    return account;
+                }
+            }
+            return null;
+        }
+
+        public (decimal balance, string error) CalculateBalance(int accountNumber)
+        {
+            Account account = GetAccountByNumber(accountNumber);
+            if (account == null)
+            {
+                return (0, "Account not found");
+            }
+
             decimal balance = 0.0m;
-            foreach (Transaction transaction in Transactions)
+            foreach (Transaction transaction in account.Transactions)
             {
                 balance += transaction.Quantity;
             }
-            return balance;
+
+            return (balance, null);
         }
 
     }
