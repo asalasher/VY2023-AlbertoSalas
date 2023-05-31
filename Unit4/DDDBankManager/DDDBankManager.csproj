@@ -44,6 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2-Business\AccountManager.cs" />
+    <Compile Include="3-Domain\Account.cs" />
+    <Compile Include="4-IntrastructureData\AccountRepository.cs" />
+    <Compile Include="4-IntrastructureData\UserRepository.cs" />
+    <Compile Include="Enum.cs" />
     <Compile Include="InputValidator.cs" />
     <Compile Include="1-Presentation\ConsoleLogger.cs" />
     <Compile Include="Program.cs" />
@@ -54,8 +58,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="4-IntrastructureData\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

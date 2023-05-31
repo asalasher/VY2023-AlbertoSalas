@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DDDBankManager
 {
@@ -29,7 +28,7 @@ namespace DDDBankManager
 
         public void Run()
         {
-            LogInUser();
+            AuthenticateUser();
             if (exit) { return; }
 
             do
@@ -40,7 +39,7 @@ namespace DDDBankManager
             while (!exit);
         }
 
-        public void LogInUser()
+        public void AuthenticateUser()
         {
             numberOfAttempts = 0;
             Console.WriteLine("Introduce your account number");
@@ -49,16 +48,16 @@ namespace DDDBankManager
             {
                 int inputAccount = AskForInteger("Introduce your account number", 1);
                 string inputPassword = AskForString("Introduce your password");
-                User user = new AccountManager.GetUserByAccountNumber(inputAccount);
+                (User activeUser, string error) = new AccountManager().AuthenticateUser(inputAccount, inputPassword);
 
-                if (user != null)
+                if (error == null)
                 {
-                    Console.WriteLine("Account number of password incorrect");
+                    this.activeUser = activeUser;
                     break;
                 }
 
                 numberOfAttempts++;
-                Console.WriteLine("Account number of password incorrect");
+                Console.WriteLine(error);
                 Console.WriteLine("Try again");
             }
 
@@ -145,7 +144,7 @@ namespace DDDBankManager
 
         public void PrintOptions()
         {
-            foreach(string option in optionNames)
+            foreach (string option in optionNames)
             {
                 Console.WriteLine(option);
             }
@@ -214,21 +213,35 @@ namespace DDDBankManager
 
         public void PrintAccountBalance()
         {
-            Console.WriteLine("Your account balance is:");
-            decimal balance = new AccountManager().CalculateBalance(activeUser.AccountNumber);
+            (decimal balance, string error) = new AccountManager().CalculateBalance(activeUser.AccountNumber);
+
+            if (error != null)
+            {
+                Console.WriteLine(error);
+
+            }
+
+            Console.WriteLine($"Your account balance is:{balance}");
         }
 
         public void PrintTransactions(TransactionType transactionType)
         {
-            List<Transaction> transactions = new TransactionManager().findById(activeUser.idAccount);
+            (List<Transaction> transactions, string error) = new AccountManager()
+                .GetAccountTrasactions(activeUser.AccountNumber);
 
-            if (Transactions.Count == 0)
+            if (error != null)
+            {
+                Console.WriteLine(error);
+                return;
+            }
+
+            if (transactions.Count == 0)
             {
                 Console.WriteLine("There are no transactions to show");
                 return;
             }
 
-            foreach (Transaction transaction in Transactions)
+            foreach (Transaction transaction in transactions)
             {
                 switch (transactionType)
                 {
