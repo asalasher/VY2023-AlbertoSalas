@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace POOBankManagerV2.Classes
 {
-    public class Account
+    public class Account : IAccount
     {
         public int AccountNumber { get; set; }
         public List<Transaction> Transactions { get; set; }
@@ -23,6 +23,23 @@ namespace POOBankManagerV2.Classes
             var transaction = new Transaction(quantity);
             Transactions.Add(transaction);
             return;
+        }
+
+        public decimal GetBalance()
+        {
+            decimal balance = 0.0m;
+
+            if (Transactions.Count == 0)
+            {
+                return balance;
+            }
+
+            foreach (Transaction transaction in account.Transactions)
+            {
+                balance += transaction.Quantity;
+            }
+
+            return balance;
         }
 
     }

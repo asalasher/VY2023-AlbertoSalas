@@ -48,7 +48,7 @@ namespace DDDBankManager
             {
                 int inputAccount = AskForInteger("Introduce your account number", 1);
                 string inputPassword = AskForString("Introduce your password");
-                (User activeUser, string error) = new AccountManager().AuthenticateUser(inputAccount, inputPassword);
+                (User activeUser, string error) = new AccountService().AuthenticateUser(inputAccount, inputPassword);
 
                 if (error == null)
                 {
@@ -90,7 +90,7 @@ namespace DDDBankManager
             return 0;
         }
 
-        public decimal AskForDecimal(string consoleText, decimal minimumValue)
+        public decimal AskForDecimal(string consoleText, int minimumValue)
         {
             numberOfAttempts = 0;
             Console.WriteLine($"{consoleText}. It must be a decimal number greater or equal to {minimumValue}.");
@@ -158,13 +158,11 @@ namespace DDDBankManager
             switch (chosenOption)
             {
                 case "1":
-                    // Insert money
-                    WithdrawMoney();
+                    InsertMoney();
                     break;
 
                 case "2":
-                    // Withdraw money
-                    InsertMoney();
+                    WithdrawMoney();
                     break;
 
                 case "3":
@@ -181,7 +179,6 @@ namespace DDDBankManager
 
                 case "6":
                     PrintAccountBalance();
-                    // Calculate balance
                     break;
 
                 case "7":
@@ -197,28 +194,39 @@ namespace DDDBankManager
 
         public void InsertMoney()
         {
-            decimal amount = AskForDecimal("Insert the amount you would like to insert", 0.1m);
+            decimal amount = AskForDecimal("Insert the amount you would like to insert", 0);
+            (bool status, string error) = new AccountService().InsertMoney(activeUser.AccountNumber, amount);
+
+            if (!status)
+            {
+                Console.WriteLine("Money not inserted correctly");
+                Console.WriteLine(error);
+            }
+
+            Console.WriteLine("Money inserted correctly");
         }
 
         public void WithdrawMoney()
         {
-            decimal amount = AskForDecimal("Insert the amount you would like to withdraw", 0.1m);
-        }
+            decimal amount = AskForDecimal("Insert the amount you would like to withdraw", 0);
+            (bool status, string error) = new AccountService().WithdrawMoney(activeUser.AccountNumber, amount);
 
-        public void Logout()
-        {
-            activeUser = null;
-            Console.WriteLine("Logging you out...");
+            if (!status)
+            {
+                Console.WriteLine("Money not withdrawn correctly");
+                Console.WriteLine(error);
+            }
+
+            Console.WriteLine("Money withdrawn correctly");
         }
 
         public void PrintAccountBalance()
         {
-            (decimal balance, string error) = new AccountManager().CalculateBalance(activeUser.AccountNumber);
+            (decimal balance, string error) = new AccountService().GetAccountBalance(activeUser.AccountNumber);
 
             if (error != null)
             {
                 Console.WriteLine(error);
-
             }
 
             Console.WriteLine($"Your account balance is:{balance}");
@@ -226,8 +234,8 @@ namespace DDDBankManager
 
         public void PrintTransactions(TransactionType transactionType)
         {
-            (List<Transaction> transactions, string error) = new AccountManager()
-                .GetAccountTrasactions(activeUser.AccountNumber);
+            (List<string> transactions, string error) = new AccountService()
+                .GetAccountTrasactions(activeUser.AccountNumber, transactionType);
 
             if (error != null)
             {
@@ -241,28 +249,15 @@ namespace DDDBankManager
                 return;
             }
 
-            foreach (Transaction transaction in transactions)
+            foreach (string transaction in transactions)
             {
-                switch (transactionType)
-                {
-                    case TransactionType.Income:
-                        if (transaction.Quantity > 0)
-                        {
-                            Console.WriteLine(transaction.ToString());
-                        }
-                        break;
-                    case TransactionType.Outcome:
-                        if (transaction.Quantity < 0)
-                        {
-                            Console.WriteLine(transaction.ToString());
-                        }
-                        break;
-                    default:
-                        Console.WriteLine(transaction.ToString());
-                        break;
-                }
+                Console.WriteLine(transaction);
             }
-            return;
+        }
+        public void Logout()
+        {
+            activeUser = null;
+            Console.WriteLine("Logging you out...");
         }
 
     }

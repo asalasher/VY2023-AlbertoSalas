@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
 namespace DDDBankManager
 {
-    public class InputValidator
+    public class InputValidator : IInputValidator
     {
 
-        public (int validatedInput, string error) ParseInteger (string userInput, int minimumValue)
+        public (int validatedInput, string error) ParseInteger(string userInput, int minimumValue)
         {
             if (int.TryParse(userInput, out int validatedInput) && validatedInput >= minimumValue)
             {
@@ -19,7 +16,7 @@ namespace DDDBankManager
             return (0, "Invalid input");
         }
 
-        public (decimal validatedInput, string error) ParseDecimal (string userInput, int minimumValue)
+        public (decimal validatedInput, string error) ParseDecimal(string userInput, int minimumValue)
         {
             if (decimal.TryParse(userInput, out decimal validatedInput) && validatedInput >= minimumValue)
             {

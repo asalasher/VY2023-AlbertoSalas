@@ -2,7 +2,7 @@
 
 namespace DDDBankManager
 {
-    public class Transaction
+    public class Transaction : ITransaction
     {
         public decimal Quantity { get; set; }
         public string Id { get; set; }
