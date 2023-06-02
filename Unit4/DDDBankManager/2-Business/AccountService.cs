@@ -6,10 +6,10 @@ namespace DDDBankManager
 {
     public class AccountService : IAccountService
     {
-        private readonly IUserRepository userRepository = Program.userRepository;
-        private readonly IAccountRepository accountRepository = Program.accountRepository;
+        private readonly IRepository<User> userRepository = Program.userRepository;
+        private readonly IRepository<Account> accountRepository = Program.accountRepository;
 
-        public AccountService(IUserRepository userRepository, IAccountRepository accountRepository)
+        public AccountService(IRepository<User> userRepository, IRepository<Account> accountRepository)
         {
             this.userRepository = userRepository;
             this.accountRepository = accountRepository;
@@ -32,7 +32,6 @@ namespace DDDBankManager
             {
                 return (user, null);
             }
-
             return (null, "Account number or password incorrect");
         }
 

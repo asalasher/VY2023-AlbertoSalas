@@ -47,8 +47,7 @@
     <Compile Include="2-Business\IBusiness\IAccountService.cs" />
     <Compile Include="3-Domain\Account.cs" />
     <Compile Include="4-InfrastructureData\AccountRepository.cs" />
-    <Compile Include="3-Domain\IRepository\IAccountRepository.cs" />
-    <Compile Include="3-Domain\IRepository\IUserRepository.cs" />
+    <Compile Include="3-Domain\IRepository\IRepository.cs" />
     <Compile Include="4-InfrastructureData\UserRepository.cs" />
     <Compile Include="3-Domain\Enum.cs" />
     <Compile Include="5-Infrastructure\IInfrastructure\IInputValidator.cs" />

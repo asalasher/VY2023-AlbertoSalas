@@ -12,7 +12,6 @@ namespace DDDBankManager
             {
                 return (validatedInput, null);
             }
-
             return (0, "Invalid input");
         }
 
@@ -22,17 +21,15 @@ namespace DDDBankManager
             {
                 return (validatedInput, null);
             }
-
             return (0, "Invalid input");
         }
 
         public (DateTime validatedInput, string error) ParseDate(string userInput)
         {
-            if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validatedInput))
+            if (DateTime.TryParseExact(userInput, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validatedInput))
             {
                 return (validatedInput, null);
             }
-
             return (new DateTime(), "Date input not valid");
         }
 

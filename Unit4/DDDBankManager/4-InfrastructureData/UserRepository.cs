@@ -2,9 +2,9 @@
 
 namespace DDDBankManager._4_IntrastructureData
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : IRepository<User>
     {
-        private readonly List<User> users;
+        public List<User> users;
 
         public UserRepository() { }
         public UserRepository(List<User> users)

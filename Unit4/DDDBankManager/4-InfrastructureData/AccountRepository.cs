@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DDDBankManager._4_IntrastructureData
 {
-    public class AccountRepository : IAccountRepository
+    public class AccountRepository : IRepository<Account>
     {
         private readonly List<Account> accounts;
         public AccountRepository() { }
