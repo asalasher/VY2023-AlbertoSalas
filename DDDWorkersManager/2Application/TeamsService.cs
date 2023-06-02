@@ -24,13 +24,6 @@ namespace DDDWorkersManager._2Application
 
         public Team GetTeamByName(string teamName)
         {
-            foreach (var team in Teams)
-            {
-                if (team.Name == name)
-                {
-                    return team;
-                }
-            }
             return null;
         }
 
@@ -41,44 +34,14 @@ namespace DDDWorkersManager._2Application
 
         public Team GetTeamByWorkerId(int idWorker)
         {
-            foreach (var team in Teams)
-            {
-                if (team.IsWorkerInTeam(idWorker))
-                {
-                    return team;
-                }
-            }
             return null;
         }
 
         public bool DeleteIdWorkerFromTeam(string idWorker, string idTeam)
         {
-
             var team = _teamsRepository.GetById(idTeam);
-
-
-            foreach (var team in Teams)
-            {
-                if (team.Manager.Id == idWorker)
-                {
-                    team.Manager = null;
-                    return true;
-                }
-                else
-                {
-                    foreach (var worker in team.Technicians)
-                    {
-                        if (worker.Id == idWorker)
-                        {
-                            team.Technicians.Remove(worker);
-                            return true;
-                        }
-                    }
-                }
-            }
             return false;
         }
-
 
     }
 }

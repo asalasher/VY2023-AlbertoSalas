@@ -2,7 +2,7 @@
 
 namespace DDDWorkersManager._3Domain.Contracts
 {
-    internal interface IRepositoryTasks : IRepository<Tasks>
+    public interface IRepositoryTasks : IRepository<Tasks>
     {
     }
 }
