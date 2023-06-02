@@ -43,13 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="2-Business\AccountManager.cs" />
+    <Compile Include="2-Business\AccountService.cs" />
+    <Compile Include="2-Business\IBusiness\IAccountService.cs" />
     <Compile Include="3-Domain\Account.cs" />
     <Compile Include="4-InfrastructureData\AccountRepository.cs" />
+    <Compile Include="3-Domain\IRepository\IAccountRepository.cs" />
+    <Compile Include="3-Domain\IRepository\IUserRepository.cs" />
     <Compile Include="4-InfrastructureData\UserRepository.cs" />
-    <Compile Include="Enum.cs" />
-    <Compile Include="IInputValidator.cs" />
-    <Compile Include="InputValidator.cs" />
+    <Compile Include="3-Domain\Enum.cs" />
+    <Compile Include="5-Infrastructure\IInfrastructure\IInputValidator.cs" />
+    <Compile Include="5-Infrastructure\InputValidator.cs" />
     <Compile Include="1-Presentation\ConsoleLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,9 +63,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="2-Business\IBusiness\" />
-    <Folder Include="3-Domain\IDomain\" />
-    <Folder Include="4-InfrastructureData\IInfrastructureData\" />
+    <Folder Include="1-Presentation\IPresentation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

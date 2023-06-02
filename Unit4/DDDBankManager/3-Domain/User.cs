@@ -1,6 +1,6 @@
 ﻿namespace DDDBankManager
 {
-    public class User : IUser
+    public class User
     {
         public int AccountNumber { get; set; }
         private string Password { get; set; }

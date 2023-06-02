@@ -28,8 +28,7 @@ namespace DDDBankManager
 
             userRepository = new UserRepository(mockUsers);
             accountRepository = new AccountRepository(mockAccounts);
-
-            new ConsoleLogger(3).Run();
+            new ConsoleLogger(3, new AccountService(userRepository, accountRepository)).Run();
         }
     }
 }

@@ -45,10 +45,8 @@ namespace DDDBankManager
             }
 
             List<string> transactions = new List<string>();
-
             foreach (var transaction in account.Transactions)
             {
-
                 if (transactionType == TransactionType.Income && transaction.Quantity > 0)
                 {
                     transactions.Add(transaction.ToString());
@@ -61,7 +59,6 @@ namespace DDDBankManager
                 {
                     transactions.Add(transaction.ToString());
                 }
-
             }
             return (transactions, null);
         }
@@ -85,7 +82,9 @@ namespace DDDBankManager
                 return (false, "account not found");
             }
 
-            account.AddTransaction(amount);
+            Transaction transaction = new Transaction(amount);
+
+            account.AddTransaction(transaction);
             bool status = accountRepository.Set(account);
             if (status)
             {
@@ -105,7 +104,9 @@ namespace DDDBankManager
                 return (false, "account not found");
             }
 
-            account.AddTransaction(-1 * amount);
+            Transaction transaction = new Transaction(-1 * amount);
+
+            account.AddTransaction(transaction);
             bool status = accountRepository.Set(account);
             if (status)
             {

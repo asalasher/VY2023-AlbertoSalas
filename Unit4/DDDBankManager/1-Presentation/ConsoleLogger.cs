@@ -5,7 +5,7 @@ namespace DDDBankManager
 {
     public class ConsoleLogger
     {
-
+        private IAccountService _accountService;
         private readonly List<string> optionNames = new List<string>(){
                 {"1. Money income"},
                 {"2. Money outcome"},
@@ -21,9 +21,10 @@ namespace DDDBankManager
         private readonly int maxNumberOfAttempts;
         private User activeUser = null;
 
-        public ConsoleLogger(int maxNumberOfAttempts)
+        public ConsoleLogger(int maxNumberOfAttempts, IAccountService accountService)
         {
             this.maxNumberOfAttempts = maxNumberOfAttempts;
+            _accountService = accountService;
         }
 
         public void Run()
@@ -48,7 +49,7 @@ namespace DDDBankManager
             {
                 int inputAccount = AskForInteger("Introduce your account number", 1);
                 string inputPassword = AskForString("Introduce your password");
-                (User activeUser, string error) = new AccountService().AuthenticateUser(inputAccount, inputPassword);
+                (User activeUser, string error) = _accountService.AuthenticateUser(inputAccount, inputPassword);
 
                 if (error == null)
                 {
@@ -195,7 +196,7 @@ namespace DDDBankManager
         public void InsertMoney()
         {
             decimal amount = AskForDecimal("Insert the amount you would like to insert", 0);
-            (bool status, string error) = new AccountService().InsertMoney(activeUser.AccountNumber, amount);
+            (bool status, string error) = _accountService.InsertMoney(activeUser.AccountNumber, amount);
 
             if (!status)
             {
@@ -209,7 +210,7 @@ namespace DDDBankManager
         public void WithdrawMoney()
         {
             decimal amount = AskForDecimal("Insert the amount you would like to withdraw", 0);
-            (bool status, string error) = new AccountService().WithdrawMoney(activeUser.AccountNumber, amount);
+            (bool status, string error) = _accountService.WithdrawMoney(activeUser.AccountNumber, amount);
 
             if (!status)
             {
@@ -222,7 +223,7 @@ namespace DDDBankManager
 
         public void PrintAccountBalance()
         {
-            (decimal balance, string error) = new AccountService().GetAccountBalance(activeUser.AccountNumber);
+            (decimal balance, string error) = _accountService.GetAccountBalance(activeUser.AccountNumber);
 
             if (error != null)
             {
@@ -234,7 +235,7 @@ namespace DDDBankManager
 
         public void PrintTransactions(TransactionType transactionType)
         {
-            (List<string> transactions, string error) = new AccountService()
+            (List<string> transactions, string error) = _accountService
                 .GetAccountTrasactions(activeUser.AccountNumber, transactionType);
 
             if (error != null)
@@ -254,6 +255,7 @@ namespace DDDBankManager
                 Console.WriteLine(transaction);
             }
         }
+
         public void Logout()
         {
             activeUser = null;
