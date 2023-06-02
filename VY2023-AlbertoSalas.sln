@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POOBankManagerV1", "Unit3\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POOBankManagerV2", "Unit3\POOBankManagerV2\POOBankManagerV2.csproj", "{EB6D13A0-F2CF-4CF3-AE1C-1BAD3F9A8B0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDWorkersManager", "DDDWorkersManager\DDDWorkersManager.csproj", "{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{EB6D13A0-F2CF-4CF3-AE1C-1BAD3F9A8B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB6D13A0-F2CF-4CF3-AE1C-1BAD3F9A8B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB6D13A0-F2CF-4CF3-AE1C-1BAD3F9A8B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{A713E036-686C-40F6-8693-949D087061E4} = {04E0D82C-E87F-4DEC-B855-0F848FCAFE09}
 		{4E61ECC3-64E7-4A12-9353-E069366364AA} = {0EDEEA41-9036-4B60-A78D-C3B5FEB1CE13}
 		{EB6D13A0-F2CF-4CF3-AE1C-1BAD3F9A8B0E} = {0EDEEA41-9036-4B60-A78D-C3B5FEB1CE13}
+		{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6} = {04E0D82C-E87F-4DEC-B855-0F848FCAFE09}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78B6DF37-6CF4-49DC-875C-FADC5362C173}
