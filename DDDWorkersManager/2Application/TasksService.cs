@@ -3,17 +3,27 @@ using DDDWorkersManager._3Domain.Entities.Worker;
 
 namespace DDDWorkersManager._2Application
 {
-    public class TasksService
+    public class TasksService : ITasksService
     {
-        private readonly IRepositoryTeam _teamsRepository;
-        private readonly IRepositoryItWorker _workersRepository;
         private readonly IRepositoryTasks _tasksRepository;
+        private readonly ISession _session;
 
-        public TasksService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, IRepositoryTasks tasksRepository)
+        public TasksService(IRepositoryTasks tasksRepository, ISession session)
         {
-            _teamsRepository = teamsRepository;
-            _workersRepository = workersRepository;
             _tasksRepository = tasksRepository;
+            _session = session;
+        }
+
+        public (bool status, string error) RegisterNewTask(string name, string description, string technology)
+        {
+            if (!_session.IsActiveUserManager)
+            {
+                return (false, "not allowed");
+            }
+
+            bool status = _tasksRepository.Insert(new Tasks(name, description, technology));
+            string errorMsg = status ? string.Empty : "error when saving in database";
+            return (status, errorMsg);
         }
 
         public (bool status, string error) AssignTaskToItWorker(int idWorker, int idTask)

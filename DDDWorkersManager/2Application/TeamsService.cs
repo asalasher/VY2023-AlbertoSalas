@@ -7,25 +7,33 @@ using System.Linq;
 
 namespace DDDWorkersManager._2Application
 {
-    public class TeamsService
+    public class TeamsService : ITeamsService
     {
         private readonly IRepositoryTeam _teamsRepository;
         private readonly IRepositoryItWorker _workersRepository;
         private readonly IRepositoryTasks _tasksRepository;
+        private readonly ISession _session;
 
-        public TeamsService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, IRepositoryTasks tasksRepository)
+        public TeamsService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, IRepositoryTasks tasksRepository, ISession session)
         {
             _teamsRepository = teamsRepository;
             _workersRepository = workersRepository;
             _tasksRepository = tasksRepository;
+            _session = session;
         }
 
         // TODO - DTO
-        public bool RegisterNewTeam(string teamName)
+        public (bool status, string error) RegisterNewTeam(string teamName)
         {
+            if (!_session.IsActiveUserManager)
+            {
+                return (false, "not allowed");
+            }
+
             var newTeam = new Team(teamName);
-            _teamsRepository.Insert(newTeam);
-            return true;
+            bool status = _teamsRepository.Insert(newTeam);
+
+            return (status, string.Empty);
         }
 
         public Team GetTeamMembers(int idTeam)
@@ -33,20 +41,13 @@ namespace DDDWorkersManager._2Application
             return null;
         }
 
-        public List<string> GetAllTeamNames()
+        public (bool status, List<string>) GetAllTeamNames()
         {
-            // TODO - cambiar esto para que me venga de la capa de data
-            return _teamsRepository.GetAll().Select(x => x.Name).ToList();
-        }
-
-        public bool DeleteWorkerFromTeam(int idWorker, int idTeam)
-        {
-            var worker = _workersRepository.GetById(idWorker);
-            if (worker.IdTeam == idTeam)
+            if (!_session.IsActiveUserManager)
             {
-                return _workersRepository.Delete(idWorker);
+                return (false, null);
             }
-            return true;
+            return (true, _teamsRepository.GetAll().Select(x => x.Name).ToList());
         }
 
         public List<Tasks> GetTasksAssignedToTeam(int idTeam)

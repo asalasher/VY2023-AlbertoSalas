@@ -33,8 +33,7 @@ namespace DDDWorkersManager._2Application
             {
                 Session.IsActiveUserManager = false;
                 Session.ActiveUserId = idWorker;
-                Session.IsActiveUserManager = _teamsRepository.GetByManagerId(idWorker) is null ? true : false;
-
+                Session.IsActiveUserManager = _teamsRepository.GetByManagerId(idWorker) is null ? false : true;
                 return (Session, string.Empty);
             }
         }

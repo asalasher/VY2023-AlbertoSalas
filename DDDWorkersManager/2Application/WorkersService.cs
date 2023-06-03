@@ -6,15 +6,17 @@ using System.Collections.Generic;
 
 namespace DDDWorkersManager._2Application
 {
-    internal class WorkersService
+    internal class WorkersService : IWorkersService
     {
         private readonly IRepositoryTeam _teamsRepository;
         private readonly IRepositoryItWorker _workersRepository;
+        private readonly ISession _session;
 
-        public WorkersService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository)
+        public WorkersService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, ISession session)
         {
             _teamsRepository = teamsRepository;
             _workersRepository = workersRepository;
+            _session = session;
         }
 
         public (bool status, string error) RegisterNewItWorker(
@@ -26,6 +28,10 @@ namespace DDDWorkersManager._2Application
             WorkerLevel level
             )
         {
+            if (!_session.IsActiveUserManager)
+            {
+                return (false, "not allowed");
+            }
 
             try
             {
@@ -38,7 +44,8 @@ namespace DDDWorkersManager._2Application
                     level
                     );
 
-                _workersRepository.Insert(newItWorker);
+                bool status = _workersRepository.Insert(newItWorker);
+                string errorMsg = status ? string.Empty : "error when saving to database";
                 return (true, string.Empty);
             }
             catch (ArgumentException ex)
@@ -64,21 +71,6 @@ namespace DDDWorkersManager._2Application
         public bool UnregisterItWorker(int idWorker)
         {
             return _workersRepository.Delete(idWorker);
-        }
-
-        public bool IsUserManager(int idWorker)
-        {
-            return false;
-        }
-
-        public bool IsUserTechnician(int idWorker)
-        {
-            return false;
-        }
-
-        public bool IsUserAdmin(int idWorker)
-        {
-            return idWorker == 0;
         }
 
         public (bool status, string error) AssignTeamToItWorker(int idWorker, int idTeam)
