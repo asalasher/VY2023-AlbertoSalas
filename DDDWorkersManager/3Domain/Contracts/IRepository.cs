@@ -10,4 +10,5 @@ namespace DDDWorkersManager._3Domain.Contracts
         bool Update(T entity);
         bool Delete(int id);
     }
+
 }

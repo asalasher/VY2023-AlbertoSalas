@@ -50,7 +50,7 @@
     <Compile Include="3-Domain\IRepository\IRepository.cs" />
     <Compile Include="4-InfrastructureData\UserRepository.cs" />
     <Compile Include="3-Domain\Enum.cs" />
-    <Compile Include="5-Infrastructure\IInfrastructure\IInputValidator.cs" />
+    <Compile Include="5-Infrastructure\Contracts\IInputValidator.cs" />
     <Compile Include="5-Infrastructure\InputValidator.cs" />
     <Compile Include="1-Presentation\ConsoleLogger.cs" />
     <Compile Include="Program.cs" />

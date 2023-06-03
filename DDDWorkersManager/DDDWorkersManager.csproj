@@ -43,11 +43,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="1Presentation\Presentation.cs" />
+    <Compile Include="2Application\AuthService.cs" />
+    <Compile Include="2Application\Contracts\ISession.cs" />
+    <Compile Include="2Application\Contracts\ITasksService.cs" />
+    <Compile Include="2Application\Contracts\ITeamsService.cs" />
+    <Compile Include="2Application\Contracts\IWorkersService.cs" />
+    <Compile Include="2Application\Contracts\IAuthService.cs" />
+    <Compile Include="2Application\OptionsService.cs" />
+    <Compile Include="2Application\Session.cs" />
+    <Compile Include="2Application\TasksService.cs" />
+    <Compile Include="2Application\TeamsService.cs" />
+    <Compile Include="2Application\WorkersService.cs" />
+    <Compile Include="3Domain\Contracts\IRepositoryItWorker.cs" />
+    <Compile Include="3Domain\Contracts\IRepositoryTasks.cs" />
+    <Compile Include="3Domain\Contracts\IRepositoryTeam.cs" />
+    <Compile Include="3Domain\Contracts\IRepository.cs" />
+    <Compile Include="3Domain\Entities\Tasks\Tasks.cs" />
+    <Compile Include="3Domain\Entities\Team\Team.cs" />
+    <Compile Include="3Domain\Entities\Worker\Worker.cs" />
+    <Compile Include="3Domain\Entities\Worker\WorkerLevel.cs" />
+    <Compile Include="4InfrastructureData\TasksRepository.cs" />
+    <Compile Include="4InfrastructureData\TeamsRepository.cs" />
+    <Compile Include="4InfrastructureData\ItWorkersRepository.cs" />
+    <Compile Include="5XCutting\InputValidator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

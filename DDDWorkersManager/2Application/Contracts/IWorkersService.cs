@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DDDWorkersManager._2Application
 {
-    internal interface IWorkersService
+    public interface IWorkersService
     {
         bool AssignItWorkerAsTechnician(int idWorker, int idTeam);
         (bool status, string error) AssignTeamToItWorker(int idWorker, int idTeam);

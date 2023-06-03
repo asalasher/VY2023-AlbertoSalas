@@ -1,4 +1,5 @@
 ﻿using DDDWorkersManager._3Domain.Contracts;
+using DDDWorkersManager._3Domain.Entities;
 using DDDWorkersManager._3Domain.Entities.Worker;
 
 namespace DDDWorkersManager._2Application
@@ -16,7 +17,7 @@ namespace DDDWorkersManager._2Application
 
         public (bool status, string error) RegisterNewTask(string name, string description, string technology)
         {
-            if (!_session.IsActiveUserManager)
+            if (_session.WorkerRole != WorkerRoles.Admin)
             {
                 return (false, "not allowed");
             }

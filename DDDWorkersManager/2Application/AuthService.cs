@@ -1,8 +1,9 @@
 ﻿using DDDWorkersManager._3Domain.Contracts;
+using DDDWorkersManager._3Domain.Entities;
 
 namespace DDDWorkersManager._2Application
 {
-    internal class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IRepositoryItWorker _workersRepository;
         private readonly IRepositoryTeam _teamsRepository;
@@ -25,17 +26,21 @@ namespace DDDWorkersManager._2Application
             }
             else if (idWorker == 0)
             {
-                Session.IsActiveUserManager = true;
+                Session.WorkerRole = WorkerRoles.Admin;
                 Session.ActiveUserId = idWorker;
                 return (Session, string.Empty);
             }
             else
             {
-                Session.IsActiveUserManager = false;
                 Session.ActiveUserId = idWorker;
-                Session.IsActiveUserManager = _teamsRepository.GetByManagerId(idWorker) is null ? false : true;
+                Session.WorkerRole = _teamsRepository.GetByManagerId(idWorker) is null ? WorkerRoles.Worker : WorkerRoles.Manager;
                 return (Session, string.Empty);
             }
+        }
+
+        public bool checkUserAuthorization(WorkerRoles workerRole, string option)
+        {
+            return false;
         }
 
     }

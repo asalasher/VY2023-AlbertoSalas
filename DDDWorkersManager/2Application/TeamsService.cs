@@ -1,4 +1,5 @@
 ﻿using DDDWorkersManager._3Domain.Contracts;
+using DDDWorkersManager._3Domain.Entities;
 using DDDWorkersManager._3Domain.Entities.Team;
 using DDDWorkersManager._3Domain.Entities.Worker;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace DDDWorkersManager._2Application
         // TODO - DTO
         public (bool status, string error) RegisterNewTeam(string teamName)
         {
-            if (!_session.IsActiveUserManager)
+            if (_session.WorkerRole != WorkerRoles.Admin)
             {
                 return (false, "not allowed");
             }
@@ -41,13 +42,13 @@ namespace DDDWorkersManager._2Application
             return null;
         }
 
-        public (bool status, List<string>) GetAllTeamNames()
+        public (List<string>, string error) GetAllTeamNames()
         {
-            if (!_session.IsActiveUserManager)
+            if (_session.WorkerRole != WorkerRoles.Admin)
             {
-                return (false, null);
+                return (null, "not allowed");
             }
-            return (true, _teamsRepository.GetAll().Select(x => x.Name).ToList());
+            return (_teamsRepository.GetAll().Select(x => x.Name).ToList(), string.Empty);
         }
 
         public List<Tasks> GetTasksAssignedToTeam(int idTeam)

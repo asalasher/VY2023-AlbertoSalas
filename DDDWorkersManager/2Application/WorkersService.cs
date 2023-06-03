@@ -28,7 +28,8 @@ namespace DDDWorkersManager._2Application
             WorkerLevel level
             )
         {
-            if (!_session.IsActiveUserManager)
+
+            if (_session.WorkerRole != WorkerRoles.Admin)
             {
                 return (false, "not allowed");
             }

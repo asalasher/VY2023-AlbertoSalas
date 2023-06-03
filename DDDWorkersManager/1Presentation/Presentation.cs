@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DDDWorkersManager._2Application;
+using DDDWorkersManager._5XCutting;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,50 +9,29 @@ namespace DDDWorkersManager._1Presentation
 {
     public class Presentation
     {
-        private readonly ITeam workerManager;
-        private readonly ITeamManager teamManager;
-        private readonly ITaskManager taskManager;
-        private bool exit = false;
-        private readonly Dictionary<WorkerRoles, string[]> authorizedOptions = new Dictionary<WorkerRoles, string[]>(){
-                { WorkerRoles.Admin, new string[]{"1","2","3","4","5","6","7","8","9","10","11","12"} },
-                { WorkerRoles.Manager, new string[] { "5", "6", "7", "9", "10", "12" } },
-                { WorkerRoles.Worker, new string[] { "6", "7", "10", "12" } },
-        };
+        private readonly int _maxNumberOfAttempts;
+        private readonly ITeamsService _teamService;
+        private readonly ITasksService _taskService;
+        private readonly IWorkersService _workerService;
+        private readonly IAuthService _authService;
+        private readonly Session _session;
+        public bool Exit { get; private set; } = false;
+        public int MaxNumberOfAttempts { get; private set; } = 0;
+        public int NumberOfAttempts { get; private set; } = 0;
+        public bool IsUserLogged { get; private set; }
 
-        private readonly Dictionary<string, string> optionNames = new Dictionary<string, string>(){
-                {"1", "Register new IT worker"},
-                {"2", "Register new team"},
-                {"3", "Register new task (unassigned to anyone)"},
-                {"4", "List all team names"},
-                {"5", "List team members by team name"},
-                {"6", "List unassigned tasks"},
-                {"7", "List tasks assignments by team name"},
-                {"8", "Assign IT worker to a team as manager"},
-                {"9", "Assign IT worker to a team as technician"},
-                {"10", "Assign task to IT worker"},
-                {"11", "Unregister worker"},
-                {"12", "Exit"},
-        };
-
-        int numberOfAttempts = 0;
-        int maxNumberOfAttempts;
-
-        public WorkerRoles? UserRole { get; set; }
-        public Team UserTeam { get; set; }
-        public ItWorker ActiveUser { get; set; }
-
-        public AppController() { }
-
-        public AppController(ITaskManager taskManager, IWorkerManager workerManager, ITeamManager teamManager)
+        public Presentation(
+            ITeamsService teamService,
+            IWorkersService workerService,
+            ITasksService taskService,
+            IAuthService authService,
+            int maxNumberAttempts)
         {
-            this.teamManager = teamManager;
-            this.taskManager = taskManager;
-            this.workerManager = workerManager;
-            maxNumberOfAttempts = 3;
-
-            UserRole = null;
-            UserTeam = null;
-            ActiveUser = null;
+            _teamService = teamService;
+            _workerService = workerService;
+            _taskService = taskService;
+            _authService = authService;
+            _maxNumberOfAttempts = maxNumberAttempts;
         }
 
         public void Run()
@@ -62,48 +43,27 @@ namespace DDDWorkersManager._1Presentation
                 PrintMenus();
                 AskForOption();
             }
-            while (!exit);
+            while (!Exit);
         }
 
         public void LogInUser()
         {
 
-            while (UserRole is null)
+            while (IsUserLogged == false)
             {
-                Console.WriteLine("Wellcome to your Bank");
-                int? userId = AskForInteger("Introduce your user id:", 0);
+                Console.WriteLine("Wellcome to the worker management");
+                int? idUser = AskForInteger("Introduce your user id:", 0);
 
-                if (userId == 0)
+                (ISession session, string error) = _authService.AuthenticateUser((int)idUser);
+
+                if (session != null)
                 {
-                    UserRole = WorkerRoles.Admin;
+                    // TODO - crear session
+                    IsUserLogged = true;
                     break;
                 }
 
-                if (userId > 0)
-                {
-                    ItWorker worker = workerManager.GetWorkerById((int)userId);
-                    if (worker != null)
-                    {
-                        ActiveUser = worker;
-                        UserTeam = teamManager.GetTeamByWorkerId(worker.Id);
-                        if (UserTeam.Manager.Id == worker.Id)
-                        {
-                            UserRole = WorkerRoles.Manager;
-                            break;
-                        }
-                        else
-                        {
-                            UserRole = WorkerRoles.Worker;
-                            break;
-                        }
-                    }
-                }
             }
-        }
-
-        public bool CheckUserAuth(string chosenOption)
-        {
-            return authorizedOptions[(WorkerRoles)UserRole].Contains(chosenOption);
         }
 
         public void AskForOption()
@@ -473,29 +433,7 @@ namespace DDDWorkersManager._1Presentation
             Console.WriteLine("Worker unregistered succesfully");
         }
 
-        public int? AskForInteger(string consoleText, int minimumValue)
-        {
-            Console.WriteLine($"{consoleText}. It must be an integer greater or equal to {minimumValue}.");
-            numberOfAttempts = 0;
-
-            while (numberOfAttempts < maxNumberOfAttempts)
-            {
-                if (int.TryParse(Console.ReadLine(), out int validatedInput) && validatedInput >= minimumValue)
-                {
-                    return validatedInput;
-                }
-                else
-                {
-                    numberOfAttempts++;
-                    Console.WriteLine("Invalid input. Please make sure your input is a positive integer value");
-                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
-                }
-            }
-            Console.WriteLine("Too many attempts, try again later");
-            exit = true;
-            return null;
-        }
-
+        // TODO
         public DateTime? AskForDate(string consoleText)
         {
             Console.WriteLine($"{consoleText}. It must be dd/MM/yyyy");
@@ -515,16 +453,17 @@ namespace DDDWorkersManager._1Presentation
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
-            exit = true;
+            Exit = true;
             return null;
         }
 
+        // TODO
         public WorkerLevel? AskForWorkerLevel(string consoleText)
         {
             Console.WriteLine($"{consoleText}. It must be Senior, Medium or Junior");
-            numberOfAttempts = 0;
+            NumberOfAttempts = 0;
 
-            while (numberOfAttempts < maxNumberOfAttempts)
+            while (NumberOfAttempts < _maxNumberOfAttempts)
             {
                 if (WorkerLevel.TryParse(Console.ReadLine(), out WorkerLevel validatedInput))
                 {
@@ -538,32 +477,85 @@ namespace DDDWorkersManager._1Presentation
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
-            exit = true;
+            Exit = true;
             return null;
         }
 
-        public string AskForString(string consoleText)
+
+        public int AskForInteger(string consoleText, int minimumValue)
         {
-            Console.WriteLine($"{consoleText}. It must be a valid string");
-            numberOfAttempts = 0;
+            NumberOfAttempts = 0;
+            Console.WriteLine($"{consoleText}. It must be an integer greater or equal to {minimumValue}.");
 
-            while (numberOfAttempts < maxNumberOfAttempts)
+            while (NumberOfAttempts < _maxNumberOfAttempts)
             {
-                var userInput = Console.ReadLine();
-
-                if (!string.IsNullOrEmpty(userInput))
+                (int validatedInput, string error) = new InputValidator().ParseInteger(Console.ReadLine(), minimumValue);
+                if (error is null)
                 {
-                    return userInput;
+                    return validatedInput;
                 }
                 else
                 {
-                    numberOfAttempts++;
-                    Console.WriteLine("Invalid input. Please make sure your input is not an empty text");
+                    NumberOfAttempts++;
+                    Console.WriteLine(error);
+                    Console.WriteLine("Please make sure your input is correct");
                     Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
-            exit = true;
+            Exit = true;
+            return 0;
+        }
+
+        public decimal AskForDecimal(string consoleText, int minimumValue)
+        {
+            NumberOfAttempts = 0;
+            Console.WriteLine($"{consoleText}. It must be a decimal number greater or equal to {minimumValue}.");
+
+            while (numberOfAttempts < maxNumberOfAttempts)
+            {
+                (decimal validatedInput, string error) = new InputValidator().ParseDecimal(Console.ReadLine(), minimumValue);
+
+                if (error is null)
+                {
+                    return validatedInput;
+                }
+                else
+                {
+                    numberOfAttempts++;
+                    Console.WriteLine(error);
+                    Console.WriteLine("Please make sure your input is correct");
+                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                }
+            }
+            Console.WriteLine("Too many attempts, try again later");
+            Exit = true;
+            return 0;
+        }
+
+        public string AskForString(string consoleText)
+        {
+            NumberOfAttempts = 0;
+            Console.WriteLine($"{consoleText}. It must be a valid string");
+
+            while (numberOfAttempts < maxNumberOfAttempts)
+            {
+                (string validatedInput, string error) = new InputValidator().ParseString(Console.ReadLine());
+
+                if (error is null)
+                {
+                    return validatedInput;
+                }
+                else
+                {
+                    numberOfAttempts++;
+                    Console.WriteLine(error);
+                    Console.WriteLine("Please make sure your input is a positive integer");
+                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                }
+            }
+            Console.WriteLine("Too many attempts, try again later");
+            Exit = true;
             return null;
         }
 
