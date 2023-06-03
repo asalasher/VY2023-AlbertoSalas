@@ -1,40 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DDDWorkersManager._3Domain.Entities.Team
+﻿namespace DDDWorkersManager._3Domain.Entities.Team
 {
     public class Team
     {
-        public string Id;
-        public string IdManager { get; private set; } = string.Empty;
-        public List<string> Technicians { get; private set; }
+        public static int TotalNumber { get; private set; } = 0;
+        public int Id { get; private set; }
+        public int? IdManager { get; private set; }
         public string Name { get; private set; }
 
         public Team(string name)
         {
-            Id = Guid.NewGuid().ToString();
-            Technicians = new List<string>();
+            TotalNumber++;
+            Id = TotalNumber;
+
             Name = name;
         }
 
-        public (bool status, string error) AddTechnician(string idWorker)
+        public (bool status, string error) AssignManegerToTeam(ItWorker itWorker)
         {
-            if (IsWorkerInTechnicians(idWorker))
+            if (IdManager is null)
             {
-                return (false, "Worker is already in team");
+                return (false, "the team already has a manager assigned");
             }
-            Technicians.Add(idWorker);
-            return (true, null);
-        }
 
-        public bool IsWorkerInTechnicians(string idWorker)
-        {
-            return Technicians.Contains(idWorker);
-        }
+            if (itWorker.Level != WorkerLevel.Senior)
+            {
+                return (false, "itWorker does not have the level required");
+            }
 
-        public bool IsWorkerInTeam(string idWorker)
-        {
-            return Technicians.Contains(idWorker) || IdManager == idWorker;
+            IdManager = itWorker.Id;
+            return (true, string.Empty);
         }
 
         public override string ToString()

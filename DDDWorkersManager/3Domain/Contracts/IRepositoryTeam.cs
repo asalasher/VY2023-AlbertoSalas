@@ -4,5 +4,6 @@ namespace DDDWorkersManager._3Domain.Contracts
 {
     public interface IRepositoryTeam : IRepository<Team>
     {
+        Team GetByManagerId(int idManager);
     }
 }

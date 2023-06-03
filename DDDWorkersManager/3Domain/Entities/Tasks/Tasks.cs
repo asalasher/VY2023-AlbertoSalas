@@ -1,32 +1,34 @@
-﻿using System;
-
-namespace DDDWorkersManager._3Domain.Entities.Worker
+﻿namespace DDDWorkersManager._3Domain.Entities.Worker
 {
     public class Tasks
     {
+        public static int TotalNumber { get; private set; } = 1;
+        public int Id { get; private set; }
         public string Technology { get; private set; }
-        public string Id { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public TaskStatus Status { get; private set; } = TaskStatus.ToDo;
-        public string IdWorker { get; private set; } = string.Empty;
+        public int? IdWorker { get; set; }
 
         public Tasks(string name, string description, string technology)
         {
-            Id = Guid.NewGuid().ToString();
+            TotalNumber++;
+            Id = TotalNumber;
+
             Name = name;
             Description = description;
             Technology = technology.ToLower();
         }
 
-        public (bool status, string error) AssignTaskToWorker(string idWorker)
+        public (bool status, string error) AssignTaskToItWorker(ItWorker itWorker)
         {
-            if (IdWorker == string.Empty)
+            if (!itWorker.TechKnowleges.Contains(Technology))
             {
-                IdWorker = idWorker;
-                return (true, string.Empty);
+                return (false, "itWorker does not have the tech knowledge");
             }
-            return (false, "Task already is assigned to a worker");
+
+            IdWorker = itWorker.Id;
+            return (true, string.Empty);
         }
 
         public override string ToString()

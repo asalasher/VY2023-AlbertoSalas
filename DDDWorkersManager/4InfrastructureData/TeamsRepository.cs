@@ -9,9 +9,9 @@ namespace DDDWorkersManager._4InfrastructureData
     {
         private static readonly List<Team> _teams;
 
-        public bool IsEntityOnDDBB(string id) => _teams.FirstOrDefault(x => x.Id == id) != null;
+        public bool IsEntityOnDDBB(int id) => _teams.FirstOrDefault(x => x.Id == id) != null;
 
-        public bool Delete(string id)
+        public bool Delete(int id)
         {
             for (var i = 0; i < _teams.Count; i++)
             {
@@ -26,7 +26,8 @@ namespace DDDWorkersManager._4InfrastructureData
 
         public List<Team> GetAll() => _teams;
 
-        public Team GetById(string id) => _teams.FirstOrDefault(x => x.Id == id);
+        public Team GetById(int id) => _teams.FirstOrDefault(x => x.Id == id);
+        public Team GetByManagerId(int idManager) => _teams.FirstOrDefault(x => x.IdManager == idManager);
 
         public bool Insert(Team entity)
         {

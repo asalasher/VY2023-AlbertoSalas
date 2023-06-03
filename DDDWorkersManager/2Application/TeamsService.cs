@@ -1,5 +1,9 @@
 ﻿using DDDWorkersManager._3Domain.Contracts;
 using DDDWorkersManager._3Domain.Entities.Team;
+using DDDWorkersManager._3Domain.Entities.Worker;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace DDDWorkersManager._2Application
 {
@@ -7,11 +11,13 @@ namespace DDDWorkersManager._2Application
     {
         private readonly IRepositoryTeam _teamsRepository;
         private readonly IRepositoryItWorker _workersRepository;
+        private readonly IRepositoryTasks _tasksRepository;
 
-        public TeamsService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository)
+        public TeamsService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, IRepositoryTasks tasksRepository)
         {
             _teamsRepository = teamsRepository;
             _workersRepository = workersRepository;
+            _tasksRepository = tasksRepository;
         }
 
         // TODO - DTO
@@ -22,25 +28,35 @@ namespace DDDWorkersManager._2Application
             return true;
         }
 
-        public Team GetTeamByName(string teamName)
+        public Team GetTeamMembers(int idTeam)
         {
             return null;
         }
 
-        public Team GetTeamById(string id)
+        public List<string> GetAllTeamNames()
         {
-            return _teamsRepository.GetById(id);
+            // TODO - cambiar esto para que me venga de la capa de data
+            return _teamsRepository.GetAll().Select(x => x.Name).ToList();
         }
 
-        public Team GetTeamByWorkerId(int idWorker)
+        public bool DeleteWorkerFromTeam(int idWorker, int idTeam)
         {
-            return null;
+            var worker = _workersRepository.GetById(idWorker);
+            if (worker.IdTeam == idTeam)
+            {
+                return _workersRepository.Delete(idWorker);
+            }
+            return true;
         }
 
-        public bool DeleteIdWorkerFromTeam(string idWorker, string idTeam)
+        public List<Tasks> GetTasksAssignedToTeam(int idTeam)
         {
-            var team = _teamsRepository.GetById(idTeam);
-            return false;
+            var workersId = _workersRepository.GetByTeamId(idTeam).Select(x => x.Id).ToList();
+            if (workersId.Count == 0)
+            {
+                return new List<Tasks>();
+            }
+            return _tasksRepository.GetTasksByAssignedWorker(workersId);
         }
 
     }
