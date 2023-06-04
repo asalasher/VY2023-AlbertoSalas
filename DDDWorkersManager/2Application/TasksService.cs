@@ -1,4 +1,5 @@
-﻿using DDDWorkersManager._3Domain.Contracts;
+﻿using DDDWorkersManager._3Domain;
+using DDDWorkersManager._3Domain.Contracts;
 using DDDWorkersManager._3Domain.Entities;
 using DDDWorkersManager._3Domain.Entities.Worker;
 
@@ -7,6 +8,7 @@ namespace DDDWorkersManager._2Application
     public class TasksService : ITasksService
     {
         private readonly IRepositoryTasks _tasksRepository;
+        private readonly IRepositoryItWorker _workersRepository;
         private readonly ISession _session;
 
         public TasksService(IRepositoryTasks tasksRepository, ISession session)
@@ -31,15 +33,19 @@ namespace DDDWorkersManager._2Application
         {
             Tasks task = _tasksRepository.GetById(idTask);
 
-            if (task == null)
+            if (task is null)
             {
                 return (false, "task not found");
             }
 
-            task.IdWorker = idWorker;
-            _tasksRepository.Update(task);
+            ItWorker worker = _workersRepository.GetById(idWorker);
+            if (worker is null)
+            {
+                return (false, "user not found");
+            }
 
-            return (true, string.Empty);
+            (bool status, string errorMsg) = task.AssignTaskToItWorker(worker);
+            return (status, errorMsg);
         }
 
     }

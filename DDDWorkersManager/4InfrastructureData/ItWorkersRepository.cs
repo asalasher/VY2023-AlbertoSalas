@@ -27,16 +27,8 @@ namespace DDDWorkersManager._4InfrastructureData
         public List<ItWorker> GetAll() => _workers;
 
         public ItWorker GetById(int id) => _workers.FirstOrDefault(x => x.Id == id);
+
         public List<ItWorker> GetByTeamId(int idTeam) => _workers.Where(x => x.IdTeam.Equals(idTeam)).ToList();
-
-        //public List<ItWorker> GetByTeamId(string idTeam)
-        //{
-        //    var workers = from worker in _workers
-        //                  where worker.IdTeam == idTeam
-        //                  select worker;
-
-        //    return workers.ToList();
-        //}
 
         public bool Insert(ItWorker entity)
         {

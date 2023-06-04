@@ -27,6 +27,7 @@ namespace DDDWorkersManager._4InfrastructureData
         public List<Team> GetAll() => _teams;
 
         public Team GetById(int id) => _teams.FirstOrDefault(x => x.Id == id);
+        public Team GetByName(string teamName) => _teams.FirstOrDefault(x => x.Name == teamName);
         public Team GetByManagerId(int idManager) => _teams.FirstOrDefault(x => x.IdManager == idManager);
 
         public bool Insert(Team entity)

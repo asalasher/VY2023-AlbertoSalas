@@ -11,5 +11,8 @@ namespace DDDWorkersManager._2Application
         (bool status, string error) RegisterNewItWorker(string name, string surname, DateTime birthDate, int yearsOfExperience, List<string> techKnowledge, WorkerLevel level);
         bool UnassignItWorkerFromTeam(int idWorker, int idTeam);
         bool UnregisterItWorker(int idWorker);
+        List<string> GetWorkersByTeamId(int idTeam);
+        string GetWorkerById(int idWorker);
     }
+
 }

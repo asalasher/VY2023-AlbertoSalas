@@ -50,6 +50,7 @@
     <Compile Include="2Application\Contracts\ITeamsService.cs" />
     <Compile Include="2Application\Contracts\IWorkersService.cs" />
     <Compile Include="2Application\Contracts\IAuthService.cs" />
+    <Compile Include="2Application\Contracts\IOptionsService.cs" />
     <Compile Include="2Application\OptionsService.cs" />
     <Compile Include="2Application\Session.cs" />
     <Compile Include="2Application\TasksService.cs" />

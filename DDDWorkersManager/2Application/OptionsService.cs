@@ -1,9 +1,10 @@
 ﻿using DDDWorkersManager._3Domain.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDDWorkersManager._2Application
 {
-    public class OptionsService
+    public class OptionsService : IOptionsService
     {
         private readonly Session _session;
 
@@ -33,13 +34,12 @@ namespace DDDWorkersManager._2Application
             _session = session;
         }
 
-        public void GetOptions(string role)
+        public List<string> GetOptions()
         {
-
+            WorkerRoles userRole = _session.WorkerRole;
+            var allowedOptionNumbers = authorizedOptions[userRole];
+            return allowedOptionNumbers.Select(x => ($"{x} - {_optionNumbers[x]}")).ToList();
         }
-
-
-
 
     }
 }

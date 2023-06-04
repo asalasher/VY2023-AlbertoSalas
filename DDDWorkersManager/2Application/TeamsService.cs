@@ -37,12 +37,55 @@ namespace DDDWorkersManager._2Application
             return (status, string.Empty);
         }
 
-        public Team GetTeamMembers(int idTeam)
+        public Team GetTeamById(int idTeam)
         {
-            return null;
+            return _teamsRepository.GetById(idTeam);
         }
 
-        public (List<string>, string error) GetAllTeamNames()
+        public (bool status, string error) AssignManager(int idWorker, int idTeam)
+        {
+            var worker = _workersRepository.GetById(idWorker);
+            if (worker is null)
+            {
+                return (false, "no worker found with such an id");
+            }
+
+            Team team = GetTeamById(idTeam);
+            if (team == null)
+            {
+                return (false, "no team found with such an ID");
+            }
+
+            (bool status, string error) = team.AssignManegerToTeam(worker);
+            return (status, error);
+        }
+
+        public (bool status, string error) AssignTechnician(int idWorker, int idTeam)
+        {
+            var worker = _workersRepository.GetById(idWorker);
+            if (worker is null)
+            {
+                return (false, "no worker found with such an id");
+            }
+
+            Team team = GetTeamById(idTeam);
+            if (team == null)
+            {
+                return (false, "no team found with such an ID");
+            }
+
+            worker.IdTeam = idTeam;
+            bool status = _workersRepository.Update(worker);
+            string errorMsg = status ? string.Empty : "error to save the changes into de DB"
+            return (status, errorMsg);
+        }
+
+        public Team GetTeamByName(string teamName)
+        {
+            return _teamsRepository.GetByName(teamName);
+        }
+
+        public (List<string> teamNames, string error) GetAllTeamNames()
         {
             if (_session.WorkerRole != WorkerRoles.Admin)
             {

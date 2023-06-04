@@ -38,7 +38,7 @@ namespace DDDWorkersManager._2Application
             }
         }
 
-        public bool checkUserAuthorization(WorkerRoles workerRole, string option)
+        public bool CheckUserAuthorization(WorkerRoles workerRole, string option)
         {
             return false;
         }

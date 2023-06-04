@@ -3,6 +3,7 @@ using DDDWorkersManager._3Domain.Contracts;
 using DDDWorkersManager._3Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDDWorkersManager._2Application
 {
@@ -72,6 +73,16 @@ namespace DDDWorkersManager._2Application
         public bool UnregisterItWorker(int idWorker)
         {
             return _workersRepository.Delete(idWorker);
+        }
+
+        public List<string> GetWorkersByTeamId(int idTeam)
+        {
+            return _workersRepository.GetByTeamId(idTeam).Select(x => x.ToString()).ToList();
+        }
+
+        public string GetWorkerById(int idWorker)
+        {
+            return _workersRepository.GetById(idWorker).ToString();
         }
 
         public (bool status, string error) AssignTeamToItWorker(int idWorker, int idTeam)

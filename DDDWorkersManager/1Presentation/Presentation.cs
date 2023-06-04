@@ -1,4 +1,6 @@
 ﻿using DDDWorkersManager._2Application;
+using DDDWorkersManager._3Domain;
+using DDDWorkersManager._3Domain.Entities.Team;
 using DDDWorkersManager._5XCutting;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ namespace DDDWorkersManager._1Presentation
         private readonly ITasksService _taskService;
         private readonly IWorkersService _workerService;
         private readonly IAuthService _authService;
+        private readonly IOptionsService _optionsService;
         private readonly Session _session;
         public bool Exit { get; private set; } = false;
         public int MaxNumberOfAttempts { get; private set; } = 0;
@@ -25,12 +28,14 @@ namespace DDDWorkersManager._1Presentation
             IWorkersService workerService,
             ITasksService taskService,
             IAuthService authService,
+            IOptionsService optionsService,
             int maxNumberAttempts)
         {
             _teamService = teamService;
             _workerService = workerService;
             _taskService = taskService;
             _authService = authService;
+            _optionsService = optionsService;
             _maxNumberOfAttempts = maxNumberAttempts;
         }
 
@@ -136,11 +141,9 @@ namespace DDDWorkersManager._1Presentation
         public void PrintMenus()
         {
             Console.WriteLine("==========OPTIONS===========");
-
-            var keys = authorizedOptions[(WorkerRoles)UserRole];
-            foreach (string key in keys)
+            foreach (string option in _optionsService.GetOptions())
             {
-                Console.WriteLine($"{key}. {optionNames[key]}");
+                Console.WriteLine(option);
             }
         }
 
@@ -185,7 +188,7 @@ namespace DDDWorkersManager._1Presentation
             var newTeamManagerId = AskForInteger("Introduce the id of the worker to become manager", 1);
             if (newTeamManagerId == null) { return; }
 
-            var newTeamManager = workerManager.GetWorkerById((int)newTeamManagerId);
+            var newTeamManager = _workerService.GetWorkerById((int)newTeamManagerId);
             try
             {
                 Team newTeam = new Team(newTeamManager, newTeamName);
@@ -220,47 +223,63 @@ namespace DDDWorkersManager._1Presentation
         public void ListTeamNames()
         {
             Console.WriteLine("The team names are:");
-            var allTeams = teamManager.Teams.ToList();
-            foreach (var team in allTeams)
+            (List<string> teamNames, string error) = _teamService.GetAllTeamNames();
+
+            if (!string.IsNullOrEmpty(error))
             {
-                Console.Write(team.Name);
+                Console.Write(error);
+                return;
             }
+
+            if (teamNames.Count() == 0)
+            {
+                Console.Write("No team names to show");
+                return;
+            }
+
+            foreach (var teamName in teamNames)
+            {
+                Console.Write(teamName);
+            }
+            return;
         }
 
         public void ListTeamMembersByTeamName()
         {
-            string teamName;
+            string teamName = AskForString("Introduce the Team's name:");
+            if (teamName == null) { return; }
 
-            if (UserRole == WorkerRoles.Manager)
-            {
-                teamName = UserTeam.Name;
-            }
-            else
-            {
-                teamName = AskForString("Introduce the Team's name:");
-                if (teamName == null) { return; }
-            }
-
-            Team team = teamManager.GetTeamByName(teamName);
+            Team team = _teamService.GetTeamByName(teamName);
             if (team == null)
             {
                 Console.WriteLine("No team found with such a name");
                 return;
             }
 
-            Console.WriteLine("List of technicians:");
-            foreach (var worker in team.Technicians)
+            List<string> teamMembers = _workerService.GetWorkersByTeamId(team.Id);
+
+            if (teamMembers.Count == 0)
             {
-                Console.WriteLine(worker.ToString());
+                Console.Write("No team members to show");
+                return;
+            }
+
+            Console.WriteLine("List of technicians:");
+
+            foreach (var worker in teamMembers)
+            {
+                Console.WriteLine(worker);
             }
 
             Console.WriteLine("Manager:");
-            Console.WriteLine(team.Manager.ToString());
+            Console.WriteLine(_workerService.GetWorkerById((int)team.IdManager));
         }
 
         public void ListUnassignedTasks()
         {
             Console.WriteLine("Unassigned tasks:");
+
+
             var unassignedTasks = taskManager.GetTasksByIdWorker(null);
             foreach (Tasks task in unassignedTasks)
             {
@@ -306,109 +325,53 @@ namespace DDDWorkersManager._1Presentation
 
         public void AssignTeamManager()
         {
-            int? workerId = AskForInteger("Introduce the worker's id", 1);
-            if (workerId == null) { return; }
+            int? idWorker = AskForInteger("Introduce the worker's id", 1);
+            if (idWorker == null) { return; }
 
-            ItWorker worker = workerManager.GetWorkerById((int)workerId);
-            if (worker == null)
+            int? idTeam = AskForInteger("Introduce the team's id", 1);
+            if (idTeam == null) { return; }
+
+            (bool status, string error) = _teamService.AssignManager((int)idWorker, (int)idTeam);
+            if (!status)
             {
-                Console.WriteLine("No IT worker found with such an ID");
+                Console.WriteLine(error);
                 return;
             }
-
-            if (worker.Level != WorkerLevel.Senior)
-            {
-                Console.WriteLine("The worker must be senior to be a manager");
-                return;
-            }
-
-            int? teamId = AskForInteger("Introduce the team's id", 1);
-            if (teamId == null) { return; }
-
-            Team team = teamManager.GetTeamById((int)teamId);
-            if (team == null)
-            {
-                Console.WriteLine("No team found with such an ID");
-                return;
-            }
-            if (team.Manager != null)
-            {
-                Console.WriteLine("The team already has a manager");
-                return;
-            }
+            Console.WriteLine("Manager assigned successfully");
         }
 
         public void AssignTeamTechnician()
         {
-            int? workerId = AskForInteger("Introduce the worker's id", 1);
-            if (workerId == null) { return; }
+            int? idWorker = AskForInteger("Introduce the worker's id", 1);
+            if (idWorker == null) { return; }
 
-            ItWorker worker = workerManager.GetWorkerById((int)workerId);
-            if (worker == null)
+            int? idTeam = AskForInteger("Introduce the team's id", 1);
+            if (idTeam == null) { return; }
+
+            (bool status, string errorMsg) = _teamService.AssignTechnician((int)idWorker, (int)idTeam);
+            if (!status)
             {
-                Console.WriteLine("No IT worker found with such an ID");
+                Console.WriteLine(errorMsg);
                 return;
             }
-
-            int? teamId = AskForInteger("Introduce the team's id", 1);
-            if (teamId == null) { return; }
-
-            Team team = teamManager.GetTeamById((int)teamId);
-            if (team == null)
-            {
-                Console.WriteLine("No team found with such an ID");
-                return;
-            }
-
-            if (!team.AddTechnician(worker))
-            {
-                Console.WriteLine("Technician was NOT added because already exists");
-            }
-
             Console.WriteLine("Technician added correctly");
         }
 
         public void AssignTaskToWorker()
         {
-            Console.WriteLine("Introduce the following data in order to assign a task");
-            int? idWorker;
+            int? idWorker = AskForInteger("Introduce the worker's id", 1);
+            if (idWorker == null) { return; }
 
-            if (UserRole != WorkerRoles.Worker)
-            {
-                idWorker = AskForInteger("Introduce the worker's id", 1);
-                if (idWorker == null) { return; }
-            }
-            else
-            {
-                idWorker = ActiveUser.Id;
-            }
+            int? idTask = AskForInteger("Introduce the task's id", 1);
+            if (idTask == null) { return; }
 
-            ItWorker worker = workerManager.GetWorkerById((int)idWorker);
-            if (worker == null)
+            (bool status, string errorMsg) = _taskService.AssignTaskToItWorker((int)idWorker, (int)idTask);
+            if (!status)
             {
-                Console.WriteLine("No worker found with such an id");
+                Console.WriteLine(errorMsg);
                 return;
             }
-
-            string taskName = AskForString("Task's name:");
-            if (taskName == null) { return; }
-
-            var task = taskManager.GetTaskByName(taskName);
-            if (task == null)
-            {
-                Console.WriteLine("No task found with such a name");
-                return;
-            }
-
-            if (worker.TechKnowleges.Contains(task.Technology)
-                && taskManager.AssignTaskToWorker((int)idWorker, task.Id))
-            {
-                Console.WriteLine("Task assigned correctly");
-                return;
-            }
-
-            Console.WriteLine("Worker does not know the technologies required or task is already done");
-            Console.WriteLine("Task was not assigned");
+            Console.WriteLine("Task assigned to worker correctly");
         }
 
         public void UnregisterWorker()
