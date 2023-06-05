@@ -1,8 +1,11 @@
-﻿namespace DDDWorkersManager._2Application
+﻿using System.Collections.Generic;
+
+namespace DDDWorkersManager._2Application
 {
     public interface ITasksService
     {
         (bool status, string error) AssignTaskToItWorker(int idWorker, int idTask);
         (bool status, string error) RegisterNewTask(string name, string description, string technology);
+        (List<string> unassignedTasks, string error) GetUnassignedTasks();
     }
 }

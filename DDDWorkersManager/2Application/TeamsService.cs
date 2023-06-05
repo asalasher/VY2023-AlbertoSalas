@@ -1,7 +1,7 @@
-﻿using DDDWorkersManager._3Domain.Contracts;
+﻿using DDDWorkersManager._3Domain;
+using DDDWorkersManager._3Domain.Contracts;
 using DDDWorkersManager._3Domain.Entities;
 using DDDWorkersManager._3Domain.Entities.Team;
-using DDDWorkersManager._3Domain.Entities.Worker;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -76,7 +76,7 @@ namespace DDDWorkersManager._2Application
 
             worker.IdTeam = idTeam;
             bool status = _workersRepository.Update(worker);
-            string errorMsg = status ? string.Empty : "error to save the changes into de DB"
+            string errorMsg = status ? string.Empty : "error to save the changes into de DB";
             return (status, errorMsg);
         }
 
@@ -94,14 +94,16 @@ namespace DDDWorkersManager._2Application
             return (_teamsRepository.GetAll().Select(x => x.Name).ToList(), string.Empty);
         }
 
-        public List<Tasks> GetTasksAssignedToTeam(int idTeam)
+        public (List<string> tasks, string errorMsg) GetTasksAssignedToTeam(string teamName)
         {
-            var workersId = _workersRepository.GetByTeamId(idTeam).Select(x => x.Id).ToList();
-            if (workersId.Count == 0)
+            Team team = _teamsRepository.GetByName(teamName);
+            if (team == null)
             {
-                return new List<Tasks>();
+                return (null, "no team found with such a name");
             }
-            return _tasksRepository.GetTasksByAssignedWorker(workersId);
+
+            List<ItWorker> workers = _workersRepository.GetByTeamId(team.Id);
+            return (workers.Select(x => x.ToString()).ToList(), string.Empty);
         }
 
     }

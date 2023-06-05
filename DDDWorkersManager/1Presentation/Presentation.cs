@@ -313,14 +313,18 @@ namespace DDDWorkersManager._1Presentation
             if (teamName is null)
                 return;
 
-            var tasks = _teamService.GetTasksAssignedToTeam(teamName);
-            if (tasks is null)
+            (List<string> assignedTasks, string errorMsg) = _teamService.GetTasksAssignedToTeam(teamName);
+            if (errorMsg != string.Empty)
             {
-                Console.WriteLine("team not found");
+                Console.WriteLine(errorMsg);
                 return;
             }
 
             Console.WriteLine("Tasks assigned to team:");
+            foreach (var task in assignedTasks)
+            {
+                Console.WriteLine(task);
+            }
         }
 
         public void AssignTeamManager()
@@ -382,7 +386,7 @@ namespace DDDWorkersManager._1Presentation
 
         public void UnregisterWorker()
         {
-            int? idWorker = AskForInteger("Introduce the worker's id", 1);
+            int? idWorker = AskForInteger("Introduce the id of the worker you want to unregister", 1);
             if (idWorker is null)
                 return;
 
@@ -393,17 +397,10 @@ namespace DDDWorkersManager._1Presentation
                 Console.WriteLine(errorMsg);
             }
 
-            Console.WriteLine("worker unregistered correctly");
+            // Que hacer cuando un servicio necesita de otros
+            // Eliminate worker from repository
+            // Eliminate workerId from task repository
 
-            // que hacer cuando un servicio necesita de otros
-
-            // TODO
-            if (!workerManager.UnregisterWorkerById((int)idWorker)
-                || !taskManager.DeleteIdWorkerFromTasks((int)idWorker)
-                || !teamManager.DeleteIdWorkerFromTeam((int)idWorker))
-            {
-                Console.WriteLine("Worker NOT unregistered correctly");
-            }
             Console.WriteLine("Worker unregistered succesfully");
         }
 

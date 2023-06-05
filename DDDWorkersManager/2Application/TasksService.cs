@@ -2,6 +2,8 @@
 using DDDWorkersManager._3Domain.Contracts;
 using DDDWorkersManager._3Domain.Entities;
 using DDDWorkersManager._3Domain.Entities.Worker;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DDDWorkersManager._2Application
 {
@@ -46,6 +48,12 @@ namespace DDDWorkersManager._2Application
 
             (bool status, string errorMsg) = task.AssignTaskToItWorker(worker);
             return (status, errorMsg);
+        }
+
+        public (List<string> unassignedTasks, string error) GetUnassignedTasks()
+        {
+            List<Tasks> task = _tasksRepository.GetTasksByAssignedWorker(null);
+            return (task.Select(x => x.ToString()).ToList(), string.Empty);
         }
 
     }

@@ -33,8 +33,7 @@ namespace DDDWorkersManager.Business.Test
             List<string> workers = workersService.GetWorkersByTeamId(1);
 
             // Assert
-            Assert.Equal(1, workers.Count);
-
+            Assert.Equal(simulatedWorker.ToString(), workers[0]);
         }
     }
 }

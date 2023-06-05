@@ -1,6 +1,7 @@
 ﻿using DDDWorkersManager._3Domain;
 using DDDWorkersManager._3Domain.Contracts;
 using DDDWorkersManager._3Domain.Entities;
+using DDDWorkersManager._3Domain.Entities.Worker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,13 @@ namespace DDDWorkersManager._2Application
     public class WorkersService : IWorkersService
     {
         private readonly IRepositoryItWorker _workersRepository;
-        private readonly IRepositoryTeam _teamsRepository;
+        private readonly IRepositoryTasks _tasksRepository;
         private readonly ISession _session;
 
-        public WorkersService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, ISession session)
+        public WorkersService(IRepositoryItWorker workersRepository, IRepositoryTasks tasksRepository, ISession session)
         {
-            _teamsRepository = teamsRepository;
             _workersRepository = workersRepository;
+            _tasksRepository = tasksRepository;
             _session = session;
         }
 
@@ -78,11 +79,12 @@ namespace DDDWorkersManager._2Application
                 return (false, "worker not found");
             }
 
-            bool status = UnassignItWorkerFromTeam(worker.Id, worker.IdTeam);
-            if (!status)
+            Tasks task = _tasksRepository.GetTasksByAssignedWorker(new List<int>() { worker.Id }).FirstOrDefault();
+            if (task != null)
             {
-                return (false, "error when unassigning worker from team");
-
+                task.IdWorker = null;
+                _tasksRepository.Update(task);
+                return (true, string.Empty);
             }
 
             return (true, string.Empty);
