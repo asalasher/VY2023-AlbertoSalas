@@ -1,5 +1,5 @@
 ﻿using DDDWorkersManager._2Application;
-using DDDWorkersManager._3Domain;
+using DDDWorkersManager._3Domain.Entities;
 using DDDWorkersManager._3Domain.Entities.Team;
 using DDDWorkersManager._5XCutting;
 using System;
@@ -75,9 +75,10 @@ namespace DDDWorkersManager._1Presentation
         {
             string chosenOption = AskForString("Introduce an option");
 
-            if (!CheckUserAuth(chosenOption))
+            //if (!CheckUserAuth(chosenOption))
+            if (!IsUserLogged)
             {
-                Console.WriteLine("Not authorised");
+                Console.WriteLine("Not authenticated");
                 return;
             }
 
@@ -128,7 +129,7 @@ namespace DDDWorkersManager._1Presentation
                     break;
 
                 case "12":
-                    exit = true;
+                    Exit = true;
                     break;
 
                 default:
@@ -151,47 +152,50 @@ namespace DDDWorkersManager._1Presentation
         {
             Console.WriteLine("Introduce the following data in order to create a new It worker:");
             string workerName = AskForString("Name:");
-            if (workerName == null) { return; }
+            if (workerName is null) { return; }
 
             string workerSurname = AskForString("Surname:");
-            if (workerSurname == null) { return; }
+            if (workerSurname is null) { return; }
 
-            var workerDateOfBirth = AskForDate("Date of birth:");
-            if (workerDateOfBirth == null) { return; }
+            DateTime? workerDateOfBirth = AskForDate("Date of birth:");
+            if (workerDateOfBirth is null) { return; }
 
-            var workerYearsOfExperience = AskForInteger("Years of experience:", 1);
-            if (workerYearsOfExperience == null) { return; }
+            int? workerYearsOfExperience = AskForInteger("Years of experience:", 1);
+            if (workerYearsOfExperience is null) { return; }
 
             string rawInput = AskForString("Technologies known (write them separated by a coma):");
             if (rawInput == null) { return; }
             List<string> workerTechnologies = rawInput.Split(',').Select(e => e.ToLower()).ToList();
             //var workerTechnologies = rawInput.Split(',').ToList();
 
-            var workerLevel = AskForWorkerLevel("Introduce the worker's level (Junior, Medium, Senior)");
-            if (workerLevel == null) { return; }
+            WorkerLevel? workerLevel = AskForWorkerLevel("Introduce the worker's level (Junior, Medium, Senior)");
+            if (workerLevel is null) { return; }
 
-            var newWorker = new ItWorker(workerName, workerSurname, (DateTime)workerDateOfBirth, (int)workerYearsOfExperience, workerTechnologies, (WorkerLevel)workerLevel);
+            (bool status, string errorMsg) = _workerService.RegisterNewItWorker(
+                workerName,
+                workerSurname,
+                (DateTime)workerDateOfBirth,
+                (int)workerYearsOfExperience,
+                workerTechnologies,
+                (WorkerLevel)workerLevel);
 
-            if (!workerManager.RegisterNewWorker(newWorker))
+            if (!status)
             {
-                Console.WriteLine("User unsuccesfully registered");
+                Console.WriteLine(errorMsg);
+                return;
             }
-            Console.WriteLine("User registered successfully");
+
+            Console.WriteLine("User unsuccesfully registered");
         }
 
         public void RegisterNewTeam()
         {
-            Console.WriteLine("Introduce the following data in order to create a new team:");
-            string newTeamName = AskForString("Name:");
-            if (newTeamName == null) { return; }
+            string newTeamName = AskForString("Name of the team:");
+            if (newTeamName is null) { return; }
 
-            var newTeamManagerId = AskForInteger("Introduce the id of the worker to become manager", 1);
-            if (newTeamManagerId == null) { return; }
-
-            var newTeamManager = _workerService.GetWorkerById((int)newTeamManagerId);
             try
             {
-                Team newTeam = new Team(newTeamManager, newTeamName);
+                Team newTeam = new Team(newTeamName);
             }
             catch (Exception ex)
             {
@@ -204,19 +208,21 @@ namespace DDDWorkersManager._1Presentation
         {
             Console.WriteLine("Introduce the following data in order to create a new task:");
             string taskName = AskForString("Name:");
-            if (taskName == null) { return; }
+            if (taskName is null) { return; }
 
             string taskDescription = AskForString("Description:");
-            if (taskDescription == null) { return; }
+            if (taskDescription is null) { return; }
 
             string taskTechnology = AskForString("Technology:");
-            if (taskTechnology == null) { return; }
+            if (taskTechnology is null) { return; }
 
-            var newTask = new Tasks(taskName, taskDescription, taskTechnology);
-            if (!taskManager.RegisterNewTask(newTask))
+            (bool status, string errorMsg) = _taskService.RegisterNewTask(taskName, taskDescription, taskTechnology);
+
+            if (!status)
             {
-                Console.WriteLine("Task NOT registered successfully!");
+                Console.WriteLine(errorMsg);
             }
+
             Console.WriteLine("Task registered successfully!");
         }
 
@@ -241,16 +247,15 @@ namespace DDDWorkersManager._1Presentation
             {
                 Console.Write(teamName);
             }
-            return;
         }
 
         public void ListTeamMembersByTeamName()
         {
             string teamName = AskForString("Introduce the Team's name:");
-            if (teamName == null) { return; }
+            if (teamName is null) { return; }
 
             Team team = _teamService.GetTeamByName(teamName);
-            if (team == null)
+            if (team is null)
             {
                 Console.WriteLine("No team found with such a name");
                 return;
@@ -277,59 +282,50 @@ namespace DDDWorkersManager._1Presentation
 
         public void ListUnassignedTasks()
         {
-            Console.WriteLine("Unassigned tasks:");
+            (List<string> unassignedTasks, string errorMsg) = _taskService.GetUnassignedTasks();
 
-
-            var unassignedTasks = taskManager.GetTasksByIdWorker(null);
-            foreach (Tasks task in unassignedTasks)
+            if (errorMsg != string.Empty)
             {
-                Console.WriteLine(task.Name);
+                Console.WriteLine(errorMsg);
+                return;
+            }
+
+            if (unassignedTasks.Count == 0)
+            {
+                Console.WriteLine("No tasks to show");
+                return;
+            }
+
+            Console.WriteLine("Unassigned tasks:");
+            foreach (string task in unassignedTasks)
+            {
+                Console.WriteLine(task);
             }
         }
 
         public void ListTasksAssignmentsByTeamName()
         {
-            Team team;
+            string teamName = AskForString("Introduce the team's name");
+            if (teamName is null) { return; }
 
-            if (UserRole == WorkerRoles.Manager || UserRole == WorkerRoles.Worker)
-            {
-                team = UserTeam;
-            }
-            else
-            {
-                string teamName = AskForString("Introduce the team's name");
-                if (teamName == null) { return; }
-                team = teamManager.GetTeamByName(teamName);
-            }
+            var tasks = _teamService.GetTasksAssignedToTeam(teamName);
 
-            if (team == null)
+            if (tasks is null)
             {
-                Console.WriteLine("No team found with such a name");
+                Console.WriteLine("team not found");
                 return;
             }
 
-            var assignedTasks = new List<Tasks>();
-            foreach (ItWorker worker in team.Technicians)
-            {
-                // TODO - check AddRange method
-                assignedTasks.AddRange(taskManager.GetTasksByIdWorker(worker.Id));
-            }
-            assignedTasks.AddRange(taskManager.GetTasksByIdWorker(team.Manager.Id));
-
             Console.WriteLine("Tasks assigned to team:");
-            foreach (Tasks task in assignedTasks)
-            {
-                Console.WriteLine(task.ToString());
-            }
         }
 
         public void AssignTeamManager()
         {
             int? idWorker = AskForInteger("Introduce the worker's id", 1);
-            if (idWorker == null) { return; }
+            if (idWorker is null) { return; }
 
             int? idTeam = AskForInteger("Introduce the team's id", 1);
-            if (idTeam == null) { return; }
+            if (idTeam is null) { return; }
 
             (bool status, string error) = _teamService.AssignManager((int)idWorker, (int)idTeam);
             if (!status)
@@ -343,10 +339,10 @@ namespace DDDWorkersManager._1Presentation
         public void AssignTeamTechnician()
         {
             int? idWorker = AskForInteger("Introduce the worker's id", 1);
-            if (idWorker == null) { return; }
+            if (idWorker is null) { return; }
 
             int? idTeam = AskForInteger("Introduce the team's id", 1);
-            if (idTeam == null) { return; }
+            if (idTeam is null) { return; }
 
             (bool status, string errorMsg) = _teamService.AssignTechnician((int)idWorker, (int)idTeam);
             if (!status)
@@ -360,10 +356,10 @@ namespace DDDWorkersManager._1Presentation
         public void AssignTaskToWorker()
         {
             int? idWorker = AskForInteger("Introduce the worker's id", 1);
-            if (idWorker == null) { return; }
+            if (idWorker is null) { return; }
 
             int? idTask = AskForInteger("Introduce the task's id", 1);
-            if (idTask == null) { return; }
+            if (idTask is null) { return; }
 
             (bool status, string errorMsg) = _taskService.AssignTaskToItWorker((int)idWorker, (int)idTask);
             if (!status)
@@ -376,17 +372,21 @@ namespace DDDWorkersManager._1Presentation
 
         public void UnregisterWorker()
         {
-            Console.WriteLine("Introduce the following data in order to unregister a worker");
-            var idWorker = AskForInteger("Introduce the worker's id", 1);
-            if (idWorker == null) { return; }
+            int? idWorker = AskForInteger("Introduce the worker's id", 1);
+            if (idWorker is null) { return; }
 
-            ItWorker worker = workerManager.GetWorkerById((int)idWorker);
-            if (worker == null)
+            (bool status, string errorMsg) = _workerService.UnregisterItWorker((int)idWorker);
+
+            if (!status)
             {
-                Console.WriteLine("No worker found with such an id");
-                return;
+                Console.WriteLine(errorMsg);
             }
 
+            Console.WriteLine("worker unregistered correctly");
+
+            // que hacer cuando un servicio necesita de otros
+
+            // TODO
             if (!workerManager.UnregisterWorkerById((int)idWorker)
                 || !taskManager.DeleteIdWorkerFromTasks((int)idWorker)
                 || !teamManager.DeleteIdWorkerFromTeam((int)idWorker))
@@ -400,9 +400,9 @@ namespace DDDWorkersManager._1Presentation
         public DateTime? AskForDate(string consoleText)
         {
             Console.WriteLine($"{consoleText}. It must be dd/MM/yyyy");
-            numberOfAttempts = 0;
+            NumberOfAttempts = 0;
 
-            while (numberOfAttempts < maxNumberOfAttempts)
+            while (NumberOfAttempts < _maxNumberOfAttempts)
             {
                 if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validatedInput))
                 {
@@ -410,9 +410,9 @@ namespace DDDWorkersManager._1Presentation
                 }
                 else
                 {
-                    numberOfAttempts++;
+                    NumberOfAttempts++;
                     Console.WriteLine("Invalid input. Please make sure your input follows the correct date format");
-                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                    Console.WriteLine($"{MaxNumberOfAttempts - NumberOfAttempts} attempts left");
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
@@ -434,9 +434,9 @@ namespace DDDWorkersManager._1Presentation
                 }
                 else
                 {
-                    numberOfAttempts++;
+                    NumberOfAttempts++;
                     Console.WriteLine("Invalid input. Please make sure your input is a positive decimal value");
-                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                    Console.WriteLine($"{_maxNumberOfAttempts - NumberOfAttempts} attempts left");
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
@@ -462,7 +462,7 @@ namespace DDDWorkersManager._1Presentation
                     NumberOfAttempts++;
                     Console.WriteLine(error);
                     Console.WriteLine("Please make sure your input is correct");
-                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                    Console.WriteLine($"{_maxNumberOfAttempts - NumberOfAttempts} attempts left");
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
@@ -475,7 +475,7 @@ namespace DDDWorkersManager._1Presentation
             NumberOfAttempts = 0;
             Console.WriteLine($"{consoleText}. It must be a decimal number greater or equal to {minimumValue}.");
 
-            while (numberOfAttempts < maxNumberOfAttempts)
+            while (NumberOfAttempts < _maxNumberOfAttempts)
             {
                 (decimal validatedInput, string error) = new InputValidator().ParseDecimal(Console.ReadLine(), minimumValue);
 
@@ -485,10 +485,10 @@ namespace DDDWorkersManager._1Presentation
                 }
                 else
                 {
-                    numberOfAttempts++;
+                    NumberOfAttempts++;
                     Console.WriteLine(error);
                     Console.WriteLine("Please make sure your input is correct");
-                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                    Console.WriteLine($"{_maxNumberOfAttempts - NumberOfAttempts} attempts left");
                 }
             }
             Console.WriteLine("Too many attempts, try again later");
@@ -501,7 +501,7 @@ namespace DDDWorkersManager._1Presentation
             NumberOfAttempts = 0;
             Console.WriteLine($"{consoleText}. It must be a valid string");
 
-            while (numberOfAttempts < maxNumberOfAttempts)
+            while (NumberOfAttempts < _maxNumberOfAttempts)
             {
                 (string validatedInput, string error) = new InputValidator().ParseString(Console.ReadLine());
 
@@ -511,10 +511,10 @@ namespace DDDWorkersManager._1Presentation
                 }
                 else
                 {
-                    numberOfAttempts++;
+                    NumberOfAttempts++;
                     Console.WriteLine(error);
                     Console.WriteLine("Please make sure your input is a positive integer");
-                    Console.WriteLine($"{maxNumberOfAttempts - numberOfAttempts} attempts left");
+                    Console.WriteLine($"{_maxNumberOfAttempts - NumberOfAttempts} attempts left");
                 }
             }
             Console.WriteLine("Too many attempts, try again later");

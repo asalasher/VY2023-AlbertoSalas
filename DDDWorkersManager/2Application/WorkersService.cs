@@ -70,9 +70,22 @@ namespace DDDWorkersManager._2Application
             return _workersRepository.Update(worker);
         }
 
-        public bool UnregisterItWorker(int idWorker)
+        public (bool status, string error) UnregisterItWorker(int idWorker)
         {
-            return _workersRepository.Delete(idWorker);
+            ItWorker worker = _workersRepository.GetById(idWorker);
+            if (worker is null)
+            {
+                return (false, "worker not found");
+            }
+
+            bool status = UnassignItWorkerFromTeam(worker.Id, worker.IdTeam);
+            if (!status)
+            {
+                return (false, "error when unassigning worker from team");
+
+            }
+
+            return (true, string.Empty);
         }
 
         public List<string> GetWorkersByTeamId(int idTeam)
