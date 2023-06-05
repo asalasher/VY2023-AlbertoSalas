@@ -397,10 +397,6 @@ namespace DDDWorkersManager._1Presentation
                 Console.WriteLine(errorMsg);
             }
 
-            // Que hacer cuando un servicio necesita de otros
-            // Eliminate worker from repository
-            // Eliminate workerId from task repository
-
             Console.WriteLine("Worker unregistered succesfully");
         }
 

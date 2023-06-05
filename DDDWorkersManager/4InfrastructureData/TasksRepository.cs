@@ -7,7 +7,7 @@ namespace DDDWorkersManager._4InfrastructureData
 {
     public class TasksRepository : IRepositoryTasks
     {
-        private static readonly List<Tasks> _tasks;
+        private static readonly List<Tasks> _tasks = new List<Tasks>();
 
         public bool IsEntityOnDDBB(int id) => _tasks.FirstOrDefault(x => x.Id == id) != null;
 
@@ -30,7 +30,12 @@ namespace DDDWorkersManager._4InfrastructureData
 
         public List<Tasks> GetTasksByAssignedWorker(List<int> idWorkers)
         {
-            return _tasks.Where(x => idWorkers.Contains(x.IdWorker)).ToList();
+            if (_tasks.Count == 0)
+            {
+                return _tasks;
+            }
+
+            return _tasks.Where(x => idWorkers.Contains((int)x.IdWorker)).ToList();
         }
 
         public bool Insert(Tasks entity)

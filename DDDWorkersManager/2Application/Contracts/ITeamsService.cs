@@ -6,7 +6,6 @@ namespace DDDWorkersManager._2Application
     public interface ITeamsService
     {
         (List<string> teamNames, string error) GetAllTeamNames();
-        Team GetTeamMembers(int idTeam);
         (bool status, string error) RegisterNewTeam(string teamName);
         Team GetTeamByName(string teamName);
         Team GetTeamById(int idTeam);
