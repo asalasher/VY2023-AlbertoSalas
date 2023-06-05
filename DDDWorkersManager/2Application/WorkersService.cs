@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace DDDWorkersManager._2Application
 {
-    internal class WorkersService : IWorkersService
+    public class WorkersService : IWorkersService
     {
-        private readonly IRepositoryTeam _teamsRepository;
         private readonly IRepositoryItWorker _workersRepository;
+        private readonly IRepositoryTeam _teamsRepository;
         private readonly ISession _session;
 
         public WorkersService(IRepositoryTeam teamsRepository, IRepositoryItWorker workersRepository, ISession session)
