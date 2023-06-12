@@ -8,13 +8,11 @@ namespace DDDWorkersManager
         {
             Console.WriteLine("hello world");
 
-
             // TODO dependency injection with Unity
 
             Console.WriteLine("press a key to continue");
             Console.ReadLine();
         }
-
 
     }
 }

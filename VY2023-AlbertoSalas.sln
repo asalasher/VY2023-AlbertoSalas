@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDWorkersManager.Domain.te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDWorkersManager.Business.Test", "DDDWorkersManager\DDDWorkersManager.Domain.Test\DDDWorkersManager.Business.Test\DDDWorkersManager.Business.Test.csproj", "{C7E425D2-425D-4920-9302-C071CA4092D8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit5", "Unit5", "{F1305210-8546-44CF-AE74-C4EA8B3191B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "Unit5\WebApplication1\WebApplication1.csproj", "{477C9E77-10BB-406E-B8B1-96E342927034}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,10 @@ Global
 		{C7E425D2-425D-4920-9302-C071CA4092D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7E425D2-425D-4920-9302-C071CA4092D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7E425D2-425D-4920-9302-C071CA4092D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{477C9E77-10BB-406E-B8B1-96E342927034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{477C9E77-10BB-406E-B8B1-96E342927034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{477C9E77-10BB-406E-B8B1-96E342927034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{477C9E77-10BB-406E-B8B1-96E342927034}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +114,7 @@ Global
 		{DA1B6B6C-3B9C-4F11-B82A-BE0D7FBD95E6} = {04E0D82C-E87F-4DEC-B855-0F848FCAFE09}
 		{9F1074ED-5D5B-489C-A52C-65C15EE8FB76} = {04E0D82C-E87F-4DEC-B855-0F848FCAFE09}
 		{C7E425D2-425D-4920-9302-C071CA4092D8} = {04E0D82C-E87F-4DEC-B855-0F848FCAFE09}
+		{477C9E77-10BB-406E-B8B1-96E342927034} = {F1305210-8546-44CF-AE74-C4EA8B3191B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78B6DF37-6CF4-49DC-875C-FADC5362C173}

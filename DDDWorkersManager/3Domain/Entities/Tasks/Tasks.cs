@@ -23,9 +23,7 @@
         public (bool status, string error) AssignTaskToItWorker(ItWorker itWorker)
         {
             if (!itWorker.TechKnowleges.Contains(Technology))
-            {
                 return (false, "itWorker does not have the tech knowledge");
-            }
 
             IdWorker = itWorker.Id;
             return (true, string.Empty);

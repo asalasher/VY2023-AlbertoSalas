@@ -31,9 +31,7 @@ namespace DDDWorkersManager._4InfrastructureData
         public List<Tasks> GetTasksByAssignedWorker(List<int> idWorkers)
         {
             if (_tasks.Count == 0)
-            {
                 return _tasks;
-            }
 
             return _tasks.Where(x => idWorkers.Contains((int)x.IdWorker)).ToList();
         }
@@ -41,9 +39,8 @@ namespace DDDWorkersManager._4InfrastructureData
         public bool Insert(Tasks entity)
         {
             if (IsEntityOnDDBB(entity.Id))
-            {
                 return false;
-            }
+
             _tasks.Add(entity);
             return true;
         }
